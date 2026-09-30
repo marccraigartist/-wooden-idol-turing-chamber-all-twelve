@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use or refer to The Turing Chamber, please cite this software."
+title: "THE TURING CHAMBER — Canonical All-Twelve Formal Machine and Lean 4 Certificate"
+version: "1.0.0"
+type: software
+
+authors:
+  - family-names: "Craig"
+    given-names: "Marc"
+    orcid: "https://orcid.org/0009-0007-6519-1097"
+
+date-released: 2026-09-30
+
+doi: "10.5281/zenodo.23053338"
+
+url: "https://github.com/marccraigartist/-wooden-idol-turing-chamber-all-twelve"
+repository-code: "https://github.com/marccraigartist/-wooden-idol-turing-chamber-all-twelve"
+
+license: "MIT"
