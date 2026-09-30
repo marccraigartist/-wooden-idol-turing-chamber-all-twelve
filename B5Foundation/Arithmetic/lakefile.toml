@@ -1,0 +1,11 @@
+name = "b5-foundation-arithmetic"
+defaultTargets = ["B5FoundationArithmetic"]
+
+# Deliberately no Chamber dependency: this package tests arithmetic alone.
+[[require]]
+name = "Foundation"
+git = "https://github.com/FormalizedFormalLogic/Foundation.git"
+rev = "e72cfe981aa65166f37fa4e2584f4806bc48d72f"
+
+[[lean_lib]]
+name = "B5FoundationArithmetic"

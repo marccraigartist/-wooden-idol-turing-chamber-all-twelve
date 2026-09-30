@@ -1,0 +1,61 @@
+name: Certify Turing Chamber
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  certify:
+    name: Turing Chamber all-twelve certificate
+    runs-on: macos-15-intel
+    timeout-minutes: 150
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install pinned Lean
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf |
+            sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Resolve pinned dependencies
+        working-directory: B5Foundation
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake update
+          lake exe cache get
+
+      - name: Build all-twelve certificate
+        working-directory: B5Foundation
+        shell: bash
+        run: |
+          set -euo pipefail
+          : > certificate.log
+          LEAN_NUM_THREADS=1 lake build TuringChamber_Coupled_AllTwelve 2>&1 | tee certificate.log
+
+      - name: Reject placeholders or Lean errors
+        working-directory: B5Foundation
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -n -E 'error:|failed to synthesize|sorryAx|declaration uses `sorry`' certificate.log; then
+            echo "Turing Chamber all-twelve certificate failed validation."
+            exit 1
+          fi
+
+      - name: Preserve certificate log
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: turing-chamber-all-twelve-certificate
+          path: B5Foundation/certificate.log

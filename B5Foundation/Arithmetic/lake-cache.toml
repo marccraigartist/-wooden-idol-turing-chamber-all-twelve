@@ -1,0 +1,5 @@
+[[cache.service]]
+name = "ffl"
+kind = "s3"
+artifactEndpoint = "https://cache.formalizedformallogic.org/artifacts"
+revisionEndpoint = "https://cache.formalizedformallogic.org/revisions"

@@ -1,0 +1,16 @@
+name = "b5-foundation"
+defaultTargets = ["TuringChamber_Coupled_AllTwelve"]
+
+[[require]]
+name = "turing-chamber"
+path = ".."
+
+[[require]]
+name = "b5-foundation-arithmetic"
+path = "Arithmetic"
+
+[[lean_lib]]
+name = "TuringChamber_B5FoundationAdapter"
+
+[[lean_lib]]
+name = "TuringChamber_Coupled_AllTwelve"
