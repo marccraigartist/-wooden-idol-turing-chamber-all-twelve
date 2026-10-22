@@ -1,0 +1,53 @@
+name: Certify Chapter 7 on native Phase 6
+
+on:
+  push:
+    branches: [chapter7-infinite-game-verification-20261022]
+    paths:
+      - B5Foundation/Chapter7Phase6Native.lean
+      - .chapter7-sources/**
+      - .github/workflows/chapter7-phase6.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-phase6:
+    name: Original Phase6 plus twelve-agent native All12
+    runs-on: macos-15-intel
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Lean
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf |
+            sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Resolve pinned Mathlib and Foundation
+        working-directory: B5Foundation
+        run: |
+          set -euo pipefail
+          lake update
+          lake exe cache get
+      - name: Check existing canonical certificate
+        working-directory: B5Foundation
+        run: |
+          set -euo pipefail
+          LEAN_NUM_THREADS=1 lake build TuringChamber_Coupled_AllTwelve 2>&1 |
+            tee ../.chapter7-base-build.log
+      - name: Build original Phase6 and Chapter7 native certificate
+        run: |
+          set -euo pipefail
+          python3 .chapter7-sources/verify_phase6.py 2>&1 | tee chapter7-phase6-kernel.log
+          grep 'CHAPTER7_PHASE6_CANONICAL_ALL12_KERNEL_SUCCESS' chapter7-phase6-kernel.log
+      - name: Preserve evidence even on failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chapter7-phase6-kernel-record
+          path: |
+            chapter7-phase6-kernel.log
+            .chapter7-base-build.log
