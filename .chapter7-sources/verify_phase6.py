@@ -25,7 +25,7 @@ assert len(files)==103,(len(files),sorted(files)[:20])
 candidates=['Chapter7Phase6Native','Phase6Godel','Phase6Kernel']
 main_file=root/'B5Foundation/Chapter7Phase6Native.lean'
 files['Chapter7Phase6Native']=main_file
-rx=re.compile(r'^\\s*(?:public\\s+)?import\\s+([\\w.]+)',re.M)
+rx=re.compile(r'^\s*(?:public\s+)?import\s+([\w.]+)',re.M)
 order=[];visiting=set();done=set()
 def visit(name):
   if name in done or name not in files:
