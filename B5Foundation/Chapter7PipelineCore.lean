@@ -59,8 +59,20 @@ def Lane.full {Body : Type} (l : Lane Body) : Prop :=
 theorem Lane.full_after_tick {Body : Type} (l : Lane Body)
     (f : Body → Body) (new : Passenger Body) (h : l.full) :
     (l.tick f new).full := by
-  rcases h with ⟨h3, h4, h5, h6, h7, h8⟩
-  simp [Lane.tick, Lane.full, Option.isSome, *] at *
+  rcases h with ⟨h3, h4, h5, h6, h7, _h8⟩
+  have hmap (o : Option (Passenger Body)) (ho : o.isSome = true) :
+      (o.map (evolve f)).isSome = true := by
+    cases o with
+    | none => simp at ho
+    | some p => rfl
+  change (some new).isSome = true ∧
+    (l.b3.map (evolve f)).isSome = true ∧
+    (l.b4.map (evolve f)).isSome = true ∧
+    (l.b5.map (evolve f)).isSome = true ∧
+    (l.b6.map (evolve f)).isSome = true ∧
+    (l.b7.map (evolve f)).isSome = true
+  exact ⟨rfl, hmap l.b3 h3, hmap l.b4 h4, hmap l.b5 h5,
+    hmap l.b6 h6, hmap l.b7 h7⟩
 
 structure Network (Body : Type) where
   a : Lane Body := {}
