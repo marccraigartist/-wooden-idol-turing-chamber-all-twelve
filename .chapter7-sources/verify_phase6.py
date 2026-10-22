@@ -3,7 +3,7 @@
 import base64, hashlib, os, pathlib, re, subprocess, sys, zipfile
 
 root=pathlib.Path(__file__).resolve().parents[1]
-work=root/'.chapter7-build'
+work=root/'B5Foundation/.chapter7-build'
 work.mkdir(exist_ok=True)
 encoded=(root/'.chapter7-sources/phase6-pinned-closure.b64').read_text().strip()
 archive=base64.b64decode(encoded,validate=True)
