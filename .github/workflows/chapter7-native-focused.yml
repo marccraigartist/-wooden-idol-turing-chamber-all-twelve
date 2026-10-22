@@ -16,7 +16,7 @@ jobs:
   native-focused:
     name: Compile original Phase 6 closure and Chapter 7 with pinned Lean
     runs-on: ubuntu-latest
-    timeout-minutes: 150
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
       - name: Install Lean from pinned project
@@ -31,6 +31,12 @@ jobs:
           set -euo pipefail
           lake update
           lake exe cache get
+      - name: Build pinned Foundation umbrella module
+        working-directory: B5Foundation/Arithmetic
+        run: |
+          set -euo pipefail
+          lake build Foundation
+          test -f ../.lake/packages/Foundation/.lake/build/lib/lean/Foundation.olean
       - name: Compile original Phase 6 plus Chapter 7
         run: |
           set -euo pipefail
