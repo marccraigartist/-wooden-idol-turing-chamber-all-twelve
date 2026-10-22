@@ -1,0 +1,46 @@
+name: Verify Chapter 7 Structural Lean
+
+on:
+  push:
+    branches:
+      - chapter7-infinite-game-verification-20261022
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-chapter7:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Lean
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf |
+            sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Resolve pinned dependencies
+        shell: bash
+        working-directory: B5Foundation
+        run: |
+          set -euo pipefail
+          lake update
+          lake exe cache get
+      - name: Lean kernel check Chapter 7
+        shell: bash
+        working-directory: B5Foundation
+        run: |
+          set -euo pipefail
+          lake env lean Chapter7PipelineCore.lean 2>&1 | tee chapter7-verification.log
+          if grep -E 'error:|sorryAx|declaration uses `sorry`' chapter7-verification.log; then
+            echo "Chapter 7 verification failed"; exit 1
+          fi
+      - name: Preserve verification output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chapter7-structural-lean-log
+          path: B5Foundation/chapter7-verification.log
