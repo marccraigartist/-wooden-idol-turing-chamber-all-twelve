@@ -31,12 +31,13 @@ jobs:
           set -euo pipefail
           lake update
           lake exe cache get
-      - name: Build pinned Foundation umbrella module
-        working-directory: B5Foundation/Arithmetic
+      - name: Build pinned Foundation umbrella module in Chapter 7 project
+        working-directory: B5Foundation
         run: |
           set -euo pipefail
           lake build Foundation
-          test -f ../.lake/packages/Foundation/.lake/build/lib/lean/Foundation.olean
+          test -f .lake/packages/Foundation/.lake/build/lib/lean/Foundation.olean
+          lake env lean --version
       - name: Compile original Phase 6 plus Chapter 7
         run: |
           set -euo pipefail
