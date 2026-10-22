@@ -1,0 +1,44 @@
+name: Chapter 7 Focused Native Lean Check
+
+on:
+  push:
+    branches: [chapter7-infinite-game-verification-20261022]
+    paths:
+      - .github/workflows/chapter7-native-focused.yml
+      - B5Foundation/Chapter7Phase6Native.lean
+      - .chapter7-sources/verify_phase6.py
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-focused:
+    name: Compile original Phase 6 closure and Chapter 7 with pinned Lean
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean from pinned project
+        run: |
+          set -euo pipefail
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf |
+            sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Resolve pinned dependencies
+        working-directory: B5Foundation
+        run: |
+          set -euo pipefail
+          lake update
+          lake exe cache get
+      - name: Compile original Phase 6 plus Chapter 7
+        run: |
+          set -euo pipefail
+          python3 .chapter7-sources/verify_phase6.py 2>&1 | tee chapter7-native-focused.log
+          grep 'CHAPTER7_PHASE6_CANONICAL_ALL12_KERNEL_SUCCESS' chapter7-native-focused.log
+      - name: Preserve actual kernel output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chapter7-native-focused-output
+          path: chapter7-native-focused.log
