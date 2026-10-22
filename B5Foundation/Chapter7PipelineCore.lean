@@ -147,7 +147,24 @@ theorem full_after_six {Body : Type} (f : Body → Body)
       exact ⟨Lane.full_after_tick _ _ _ ih.1,
              Lane.full_after_tick _ _ _ ih.2⟩
 
+/-- Exact identities ever admitted to either lane, newest first. -/
+theorem run_all_ids {Body : Type} (f : Body → Body)
+    (seed : Nat → Bool → Body) (n : Nat) :
+    (run f seed n).a.ids = (List.range n).reverse.map (fun k => 2*k) ∧
+    (run f seed n).b.ids = (List.range n).reverse.map (fun k => 2*k+1) := by
+  induction n with
+  | zero => simp [run, Lane.ids]
+  | succ n ih =>
+      rcases ih with ⟨ha, hb⟩
+      have hi := Network.ids_tick f seed (run f seed n)
+      constructor
+      · rw [run_succ, hi.1, run_completed, ha]
+        simp [List.range_succ, List.reverse_append]
+      · rw [run_succ, hi.2, run_completed, hb]
+        simp [List.range_succ, List.reverse_append]
+
 #print axioms run_completed
+#print axioms run_all_ids
 #print axioms run_pair_arrival
 #print axioms run_ids_length
 #print axioms passengerId_injective
