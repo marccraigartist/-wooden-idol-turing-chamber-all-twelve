@@ -2,7 +2,7 @@
 """Compile the exact archived Phase 6 Lean source closure, then Chapter7Phase6Native."""
 import base64, hashlib, os, pathlib, re, subprocess, sys, zipfile
 
-root=pathlib.Path(__file__).resolve().parents[2]
+root=pathlib.Path(__file__).resolve().parents[1]
 work=root/'.chapter7-build'
 work.mkdir(exist_ok=True)
 encoded=(root/'.chapter7-sources/phase6-pinned-closure.b64').read_text().strip()
