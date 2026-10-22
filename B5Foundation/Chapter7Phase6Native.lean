@@ -169,8 +169,9 @@ theorem payload_after_is_run (tasks : Nat → Bool → List Word) (n : Nat) :
   induction n with
   | zero => rfl
   | succ n ih =>
-      change (run tasks n).tick tasks = run tasks (n+1)
-      exact (run_succ tasks n).symm
+      change (Phase6Frame.payloadAfter (nativeConfig tasks) n).tick tasks =
+        (run tasks n).tick tasks
+      exact congrArg (fun s : Network => s.tick tasks) ih
 
 /-- Actual native Frame.step reaches exactly the indexed pipeline state at
     each two-step completion/reset, not merely an isomorphic side simulation. -/
